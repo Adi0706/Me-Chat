@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import { AiOutlineSend } from 'react-icons/ai';
+import NavBar from './NavBar';
 
 function ChatSection() {
   const [messages, setMessages] = useState(null);
@@ -6,8 +8,11 @@ function ChatSection() {
   const [previousChats, setPreviousChats] = useState([]);
   const [currentTitle, setCurrentTitle] = useState(null);
   const [firstPrompt, setFirstPrompt] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const getReply = async () => {
+    // setLoading(true);
+
     const options = {
       method: 'POST',
       body: JSON.stringify({
@@ -25,6 +30,8 @@ function ChatSection() {
       setFirstPrompt(false);
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -41,15 +48,21 @@ function ChatSection() {
           role: 'user',
           content: value,
         },
-        {
-          title: currentTitle,
-          role: messages.role,
-          content: messages.content,
-        },
       ]);
-      setValue(''); 
+
+      setTimeout(() => {
+        setPreviousChats((prevChats) => [
+          ...prevChats,
+          {
+            title: currentTitle,
+            role: messages.role,
+            content: messages.content,
+          },
+        ]);
+        setValue('');
+      }, 1000); 
     }
-  }, [messages, currentTitle]); 
+  }, [messages, currentTitle]);
 
   const createNewChat = () => {
     setMessages(null);
@@ -58,26 +71,25 @@ function ChatSection() {
     setPreviousChats([]);
     setFirstPrompt(true);
   };
-  
 
   return (
     <>
-      <div className="heading-container">
-        <h1> CHATBOT VER: 1.0 </h1>
-        <button onClick={createNewChat}> + NEW CHAT</button>
-      </div>
+      <NavBar createNewChat={createNewChat}/>
       <div className="chat-container">
-        <h1>{firstPrompt ? 'Start Your New Chat here ' : currentTitle}</h1>
+        <h1>CHATS</h1>
         <div className="chat-area">
           {previousChats.map((chat, index) => (
             <div key={index} className={chat.role === 'user' ? 'user-message' : 'chatgpt-message'}>
               {chat.content}
             </div>
           ))}
+          {loading && messages && messages.role !== 'user' && <div className="loader">...</div>}
         </div>
         <div className="input-area">
           <input value={value} onChange={(e) => setValue(e.target.value)} />
-          <button onClick={getReply}> SEND </button>
+          <button onClick={getReply}>
+            <AiOutlineSend />
+          </button>
         </div>
       </div>
     </>
