@@ -7,7 +7,7 @@ app.use(express.json())
 app.use(cors())
 
 
-const APIKEY = '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'
+const APIKEY = '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'
 
 app.post('/messages',async (req,res)=>{
 
@@ -18,8 +18,8 @@ const options = {
         "Content-Type" : "application/json"
 },
 body: JSON.stringify({
-    model : "gpt-3.5-turbo",
-    messages : [{role: "user", content: "May I help You ?"}],
+    model : "gpt-3.5-turbo-0613",
+    messages : [{role: "user", content:req.body.message}],
     max_tokens:100
 
 
@@ -29,6 +29,7 @@ body: JSON.stringify({
     try{
         const response  = await fetch('https://api.openai.com/v1/chat/completions',options)
       const data =   await response.json()
+      console.log(data);
       res.send(data)
 
     }catch (error){
