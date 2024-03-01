@@ -5,7 +5,7 @@ function NavBar({createNewChat}) {
     <>
     <nav>
     <div className="heading-container">
-        <h1>K-AI</h1>
+        <h1>Me-Chat</h1>
         <button onClick={createNewChat}>RESET</button>
       </div>
       </nav>
